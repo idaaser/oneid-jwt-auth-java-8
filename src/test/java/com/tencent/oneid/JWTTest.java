@@ -20,8 +20,9 @@ public class JWTTest {
     @Test
     public void newConfig() throws Exception {
         Config config = JWT.newConfig(testLoginBaseURL, testIssuer, testPrivKey);
-        config.setTokenLifetime(600);//10min
 
+        //设置id_token有效期
+        config.setTokenLifetime(600);//10min
     }
 
     @Test
