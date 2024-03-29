@@ -144,7 +144,7 @@ public class JWT {
         }
         String url = config.getLoginBaseURL().replace("{app_type}", app);
 
-        StringJoiner paramJoiner = new StringJoiner("?", "&", "");
+        StringJoiner paramJoiner = new StringJoiner("&", "?", "");
 
         paramJoiner.add(Utils.urlEncode(config.getTokenParam()) + "=" + Utils.urlEncode(token));
         if(params != null && !params.isEmpty()){
