@@ -4,7 +4,7 @@ OneID JWT auth sdk for java 8
 
 ## 使用步骤
 
-###集成SDK
+### 集成SDK
 在Releases中查看和下载SDK jar文件，可以看到有2个SDK jar文件，其中一个是带有`jar-with-dependencies`的jar文件，它包含了所有的依赖项，因此您无需额外引入其他依赖。另一个是不带`jar-with-dependencies`的jar文件，它需要您额外引入其他依赖，例如`nimbus-jose-jwt`。推荐使用带`jar-with-dependencies`的jar，只需将其添加到您的项目中即可。
 
 * 将`oneid-jwt-auth-java-8-{version}-jar-with-dependencies.jar`文件添加到项目的library中，确保路径配置正确。
@@ -23,7 +23,7 @@ OneID JWT auth sdk for java 8
   implementation files('lib/oneid-jwt-auth-java-8-{version}-jar-with-dependencies.jar')
   ```
   
-###使用SDK
+### 使用SDK
 > 使用案例参考：JWTTest.java
 1. 初始化配置：JWT.newConfig(loginBaseURL, issuer, privatKeyStr)
    1. 指定id_token有效期，默认是5分钟，单位是秒：config.setTokenLifetime(time)
