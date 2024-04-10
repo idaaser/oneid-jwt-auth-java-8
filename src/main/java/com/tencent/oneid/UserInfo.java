@@ -8,15 +8,15 @@ import java.util.Map;
  */
 public class UserInfo {
     /**
-     * 必填: 用户唯一标识, 映射到id_token中的sub
+     * 必填: 用户唯一标识， 映射到id_token中的sub
      */
     String id;
     /**
-     * 建议填写: 用户显示名
+     * 建议填写: 用户显示名，映射到id_token中的name
      */
     String name;
     /**
-     * 建议填写: 登录名
+     * 建议填写: 登录用户名，映射到id_token中的preferred_username
      */
     String preferredUsername;
     /**
@@ -24,11 +24,11 @@ public class UserInfo {
      */
     String email;
     /**
-     * 选填: 登录名、邮箱、手机号建议三选一
+     * 选填: 映射到id_token中的mobile，登录名、邮箱、手机号建议三选一
      */
     String mobile;
     /**
-     * 其他需要放到token里的属性
+     * 其他需要放到id_token里的属性
      */
     Map<String, Object> extension;
 
