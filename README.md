@@ -24,36 +24,21 @@ OneID JWT auth sdk for java
 ### 使用SDK
 > 使用案例参考：JwtTest.java
 1. 初始化配置：
+  - 密钥以String形式提供
   ```java
-  JwtAuth jwtAuth = JwtAuth.builder()
-                .loginBaseURL(testLoginBaseURL) //登录链接，JWT认证源配置
-                .privateKey(testPriKey) //RSA私钥字符串，支持PKCS#1和PKCS#8格式；JWT认证源配置，可以自动生成密钥或手动生成密钥后上传公钥，Utils.generateRSAKeyPair()函数可生成RSA 2048位PKCS#8格式公私钥
-                .issuer(testIssuer) //issuer JWT认证源配置
-                .tokenLifetime(600) //token有效期 单位秒，不传默认为300秒，最长不能超过JWT认证源设置的Token最长有效期，否则会被认为无效
-                .build();
+     Signer signer = Signer.newSigner(testPriKey, testIssuer, testLoginBaseURL);
+  ```
+  - 密钥以文件形式提供
+  ```java
+     Signer signer = Signer.newSignerWithKeyFile(testPriKey, testIssuer, testLoginBaseURL);
   ```
 2. 生成免登url：
-- 通过用户信息UserInfo生成
 ```java
-UserInfo userInfo = new UserInfo()
-              .setId("sub")
-              .setName("name")
-              .setPreferredUsername("preferred_username")
+UserInfo userInfo = new UserInfo("user_id", "name")
+              .setUsername("username")
               .setEmail("email")
               .setMobile("mobile")
               .setExtension(Collections.singletonMap("ext", "extData"));
 
-String url = jwtAuth.newLoginURL(userInfo, Constants.APP_TENCENT_MEETING);
-```
-- 通过自定义claims生成
-```java
-Map<String, Object> claims = new HashMap<String, Object>() {{
-          put("sub", "");
-          put("name", "");
-          put("preferred_username", "");
-          put("email", "");
-          put("phone", "");
-      }};
-
-String token = jwtAuth.newLoginURLWithClaims(claims, Constants.APP_TENCENT_MEETING);
+String url = signer.newLoginURL(userInfo, App.TENCENT_MEETING);
 ```

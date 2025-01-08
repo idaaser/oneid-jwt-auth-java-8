@@ -10,27 +10,27 @@ public class UserInfo {
     /**
      * 必填: 用户唯一标识， 映射到id_token中的sub
      */
-    String id;
+    private String id;
     /**
      * 建议填写: 用户显示名，映射到id_token中的name
      */
-    String name;
+    private String name;
     /**
      * 建议填写: 登录用户名，映射到id_token中的preferred_username
      */
-    String preferredUsername;
+    private String username;
     /**
      * 选填: 映射到id_token中的email
      */
-    String email;
+    private String email;
     /**
      * 选填: 映射到id_token中的mobile，登录名、邮箱、手机号建议三选一
      */
-    String mobile;
+    private String mobile;
     /**
      * 其他需要放到id_token里的属性
      */
-    Map<String, Object> extension;
+    private Map<String, Object> extension;
 
     public String getId() {
         return id;
@@ -50,12 +50,12 @@ public class UserInfo {
         return this;
     }
 
-    public String getPreferredUsername() {
-        return preferredUsername;
+    public String getUsername() {
+        return username;
     }
 
-    public UserInfo setPreferredUsername(String preferredUsername) {
-        this.preferredUsername = preferredUsername == null ? null : preferredUsername.trim();
+    public UserInfo setUsername(String username) {
+        this.username = username == null ? null : username.trim();
         return this;
     }
 
@@ -84,5 +84,46 @@ public class UserInfo {
     public UserInfo setExtension(Map<String, Object> extension) {
         this.extension = extension;
         return this;
+    }
+
+    private UserInfo() {}
+
+    /**
+     * 构造函数
+     * @param id 用户唯一标识
+     * @param name 用户显示名称
+     * @throws IllegalArgumentException 参数校验
+     */
+    public UserInfo(String id, String name) throws IllegalArgumentException {
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
+        String trimmedId = id.trim();
+        if (trimmedId.isEmpty()) {
+            throw new IllegalArgumentException("id MUST NOT be empty");
+        }
+        this.id = trimmedId;
+
+        if (name == null) {
+            throw new IllegalArgumentException("name must not be null");
+        }
+        String trimmedName = name.trim();
+        if (trimmedName.isEmpty()) {
+            throw new IllegalArgumentException("name MUST NOT be empty");
+        }
+        this.name = trimmedName;
+    }
+
+    /**
+     * userInfo有效性校验
+     */
+    public void validate() throws IllegalArgumentException {
+        // 三者不能全为空
+        if ((this.getUsername() == null || this.getUsername().isEmpty())
+                && (this.getEmail() == null || this.getEmail().isEmpty())
+                && (this.getMobile() == null || this.getMobile().isEmpty())) {
+            throw new IllegalArgumentException("username/email/mobile MUST NOT all empty");
+        }
+
     }
 }
