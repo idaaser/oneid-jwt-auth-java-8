@@ -8,23 +8,23 @@ import java.util.Map;
  */
 public class UserInfo {
     /**
-     * 必填: 用户唯一标识， 映射到id_token中的sub
+     * 必填: 用户唯一标识
      */
     private String id;
     /**
-     * 建议填写: 用户显示名，映射到id_token中的name
+     * 必填: 用户显示名
      */
     private String name;
     /**
-     * 建议填写: 登录用户名，映射到id_token中的preferred_username
+     * 建议填写: 用户登录名，1-64个英文字符或数字，用户登录名、邮箱、手机号三者必须提供一个
      */
     private String username;
     /**
-     * 选填: 映射到id_token中的email
+     * 选填: 邮箱，用户登录名、邮箱、手机号三者必须提供一个
      */
     private String email;
     /**
-     * 选填: 映射到id_token中的mobile，登录名、邮箱、手机号建议三选一
+     * 选填: 手机号，用户登录名、邮箱、手机号三者必须提供一个
      */
     private String mobile;
     /**

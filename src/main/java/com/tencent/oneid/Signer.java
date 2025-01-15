@@ -21,7 +21,7 @@ import java.security.PrivateKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Signer {
@@ -36,25 +36,19 @@ public class Signer {
     private PrivateKey privateKey;
 
     /**
-     * RSA私钥字符串：PKCS#1或PKCS#8格式
-     */
-    private String privateKeyStr;
-
-    private String privateKeyFilePath;
-
-    /**
-     * 登录链接
+     * OneID JWT认证源页面提供的登录链接
      */
     private String loginBaseURL;
 
+    /**
+     * 发起登录方的应用标识
+     */
     private String issuer;
 
     /**
      * token有效期，单位:秒
      */
     private int tokenLifetime = maxAllowedTokenLifetime;// 5min
-
-    private String tokenKey = defaultTokenKey;
 
     private Signer() {}
 
@@ -81,6 +75,14 @@ public class Signer {
         this.loginBaseURL = trimmedLoginUrl;
     }
 
+    /**
+     * 初始化JWT认证签发器
+     *
+     * @param privateKey 私钥
+     * @param issuer 发起登录方的应用标识
+     * @param loginBaseURL OneID JWT认证源页面提供的登录链接
+     * @throws IllegalArgumentException 参数错误
+     */
     public static Signer newSigner(String privateKey, String issuer, String loginBaseURL) throws IllegalArgumentException {
         Signer signer = new Signer(issuer, loginBaseURL);
 
@@ -91,12 +93,19 @@ public class Signer {
         if (handledPrivateKeyStr.isEmpty()) {
             throw new IllegalArgumentException("privateKey is empty");
         }
-        signer.privateKeyStr = handledPrivateKeyStr;
         signer.privateKey = parsePrivateKey(new StringReader(handledPrivateKeyStr));
 
         return signer;
     }
 
+    /**
+     * 初始化JWT认证签发器
+     *
+     * @param privateKeyFilePath 私钥文件路径
+     * @param issuer 发起登录方的应用标识
+     * @param loginBaseURL OneID JWT认证源页面提供的登录链接
+     * @throws IllegalArgumentException 参数错误
+     */
     public static Signer newSignerWithKeyFile(String privateKeyFilePath, String issuer, String loginBaseURL) throws IllegalArgumentException {
         Signer signer = new Signer(issuer, loginBaseURL);
 
@@ -124,11 +133,7 @@ public class Signer {
         this.tokenLifetime = tokenLifetime;
     }
 
-    public void setTokenKey(String tokenKey) {
-        this.tokenKey = tokenKey;
-    }
-
-    public String createToken(UserInfo user) throws Exception {
+    private String createToken(UserInfo user) throws Exception {
         user.validate();
 
         Map<String, Object> claims = new HashMap<>();
@@ -150,20 +155,28 @@ public class Signer {
         return newTokenWithClaims(claims);
     }
 
-    public String createLoginURL(UserInfo user, String app) throws Exception {
-        return createLoginURL(user, app, null);
+    /**
+     * 为指定用户创建一个免登应用的url
+     *
+     * @param user 免登用户的信息
+     * @param app 免登应用的唯一标识
+     * @return 免登链接
+     * @throws Exception 签发凭证时，可能
+     */
+    public String newLoginURL(UserInfo user, String app) throws Exception {
+        return newLoginURL(user, app, null);
     }
 
     /**
-     * 给用户创建一个免登应用的url
+     * 为指定用户创建一个免登应用的url
      *
-     * @param user
-     * @param app
-     * @param params extend url params
-     * @return
-     * @throws Exception
+     * @param user 免登用户的信息
+     * @param app 免登应用的唯一标识
+     * @param params 表示自定义的key/value键值对(以query param的方式追加到免登链接之后)
+     * @return 免录链接
+     * @throws Exception 签发凭证时，可能
      */
-    public String createLoginURL(UserInfo user, String app, Map<String, String> params) throws Exception {
+    public String newLoginURL(UserInfo user, String app, Map<String, String> params) throws Exception {
         String token = createToken(user);
         return newLoginURLWithToken(token, app, params);
     }
@@ -176,10 +189,14 @@ public class Signer {
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Invalid login URL: " + url);
         }
-        builder.addParameter(this.tokenKey, token);
+        builder.addParameter(defaultTokenKey, token);
 
         if (params != null) {
-            params.forEach(builder::addParameter);
+            params.forEach((k, v) -> {
+                if (k != null && !k.isEmpty() && v != null && !v.isEmpty()) {
+                    builder.addParameter(k, v);
+                }
+            });
         }
 
         URI targetURI;
@@ -200,8 +217,12 @@ public class Signer {
                 .expirationTime(new Date(exp))
                 .issuer(this.issuer);
 
+        UUID uuid = UUID.randomUUID();
+        String hexUUID = uuid.toString().replace("-", "");
+        builder.jwtID(hexUUID);
+
         claims.forEach((k, v) -> {
-            if (v != null) {
+            if (k != null && !k.isEmpty()) {
                 builder.claim(k, v);
             }
         });

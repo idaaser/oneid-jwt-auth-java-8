@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -43,77 +42,43 @@ public class JwtTest {
         signer.setTokenLifetime(0);
     }
 
-    /**
-     * 根据userInfo生成jwt id_token
-     * @throws Exception
-     */
-    @Test
-    public void newTokenWithUserInfo() throws Exception {
-        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c44de", "张三")
-                .setUsername("zhangsan")
-                .setEmail("zhangsan@example.com")
-                .setMobile("+86 13211111111")
-                .setExtension(Collections.singletonMap("picture", "https://www.example.com/avatar1.png"));
-
-        String token = signer.createToken(userInfo);
-        System.out.println(token);
-    }
-
-    @Test
-    public void newTokenWithKeyFile() throws Exception {
-        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c44de", "张三")
-                .setUsername("zhangsan")
-                .setEmail("zhangsan@example.com")
-                .setMobile("+86 13211111111")
-                .setExtension(Collections.singletonMap("picture", "https://www.example.com/avatar1.png"));
-
-        signerFromKeyFile.setTokenLifetime(200);
-        String token = signerFromKeyFile.createToken(userInfo);
-        Assert.assertNotNull(token);
-        System.out.println(token);
-    }
-
-    /**
-     * 基于用户信息创建一个免登应用的url
-     * @throws Exception
-     */
     @Test
     public void newLoginURL() throws Exception {
-        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c4422", "李四")
-                .setUsername("lisi")
-                .setEmail("lisi@example.com")
-                .setMobile("+86 13211111111")
+        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c44de", "张三")
+                .setUsername("zhangsan")
+                .setEmail("zhangsan@example.com")
+                .setMobile("+86 13411112222")
                 .setExtension(Collections.singletonMap("picture", "https://www.example.com/avatar1.png"));
 
-        String url = signer.createLoginURL(userInfo, App.TENCENT_MEETING);
+        String url = signer.newLoginURL(userInfo, App.TENCENT_MEETING);
         System.out.println(url);
     }
 
     @Test
     public void newLoginURLWithKeyFile() throws Exception {
-        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c4422", "李四")
-                .setUsername("lisi")
-                .setEmail("lisi@example.com")
-                .setMobile("+86 13211111112")
+        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c44de", "张三")
+                .setUsername("zhangsan")
+                .setEmail("zhangsan@example.com")
+                .setMobile("+86 13411112222")
                 .setExtension(Collections.singletonMap("picture", "https://www.example.com/avatar1.png"));
 
-        signerFromKeyFile.setTokenKey("jwt");
-        String url = signerFromKeyFile.createLoginURL(userInfo, App.TENCENT_MEETING);
+        String url = signerFromKeyFile.newLoginURL(userInfo, App.TENCENT_MEETING);
         Assert.assertNotNull(url);
         System.out.println(url);
     }
 
     @Test
     public void newLoginURLWithParam() throws Exception {
-        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c4422", "李四")
-                .setUsername("lisi")
-                .setEmail("lisi@example.com")
-                .setMobile("+86 13211111113")
+        UserInfo userInfo = new UserInfo("f99530d4-8317-4900-bd02-0127bb8c44de", "张三")
+                .setUsername("zhangsan")
+                .setEmail("zhangsan@example.com")
+                .setMobile("+86 13411112222")
                 .setExtension(Collections.singletonMap("picture", "https://www.example.com/avatar1.png"));
 
-        Map<String, String> params = Collections.singletonMap("source", "junit_test");
-        String url = signer.createLoginURL(userInfo, App.TENCENT_MEETING, params);
+        String k = "meeting_common";
+        String v = "https://meeting.tencent.com";
+        Map<String, String> params = Collections.singletonMap(k, v);
+        String url = signer.newLoginURL(userInfo, App.TENCENT_MEETING, params);
         System.out.println(url);
-
     }
 }
