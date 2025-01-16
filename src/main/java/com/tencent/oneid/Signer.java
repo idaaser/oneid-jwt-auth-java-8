@@ -101,20 +101,20 @@ public class Signer {
     /**
      * 初始化JWT认证签发器
      *
-     * @param privateKeyFilePath 私钥文件路径
+     * @param keyFilePath 私钥文件路径
      * @param issuer 发起登录方的应用标识
      * @param loginBaseURL OneID JWT认证源页面提供的登录链接
      * @throws IllegalArgumentException 参数错误
      */
-    public static Signer newSignerWithKeyFile(String privateKeyFilePath, String issuer, String loginBaseURL) throws IllegalArgumentException {
+    public static Signer newSignerWithKeyFile(String keyFilePath, String issuer, String loginBaseURL) throws IllegalArgumentException {
         Signer signer = new Signer(issuer, loginBaseURL);
 
-        if (privateKeyFilePath == null) {
-            throw new IllegalArgumentException("privateKeyFilePath is null");
+        if (keyFilePath == null) {
+            throw new IllegalArgumentException("keyFilePath is null");
         }
-        String handledKeyFile = privateKeyFilePath.trim();
+        String handledKeyFile = keyFilePath.trim();
         if (handledKeyFile.isEmpty()) {
-            throw new IllegalArgumentException("privateKeyFilePath is empty");
+            throw new IllegalArgumentException("keyFilePath is empty");
         }
 
         try (FileReader fileReader = new FileReader(handledKeyFile)) {
