@@ -6,7 +6,7 @@
 
     <groupId>com.tencent.oneid</groupId>
     <artifactId>oneid-jwt-auth-java-8</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.5</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -27,9 +27,9 @@
             <version>1.79</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.4.1</version>
         </dependency>
 
         <dependency>
